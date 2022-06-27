@@ -20,8 +20,8 @@ class ACampireBurvivorsCharacter : public ACharacter
 	class UCameraComponent* FollowCamera;
 
 	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	class URingAbility* RingAbility;
+	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	// class URingAbility* RingAbility;
 
 public:
 	ACampireBurvivorsCharacter();

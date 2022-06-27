@@ -19,6 +19,9 @@ class CAMPIREBURVIVORS_API URingAbility : public USceneComponent
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	float RPS;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	float Cooldown;
+
 	TSubclassOf<ARingTurret> BPRingTurret;
 public:	
 	// Sets default values for this component's properties
@@ -35,5 +38,7 @@ public:
 private:
 	void CreateTurrets(int TurretCount);
 	void ReassignTurretRotation();
+
+	float Timer = 0.0F;
 		
 };

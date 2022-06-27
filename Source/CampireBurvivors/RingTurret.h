@@ -13,7 +13,7 @@ class CAMPIREBURVIVORS_API ARingTurret : public AActor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent * TurretBody;
-	
+
 public:	
 	// Sets default values for this actor's properties
 	ARingTurret();
@@ -25,5 +25,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void Fire();
 
 };

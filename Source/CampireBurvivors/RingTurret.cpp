@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Engine/StaticMesh.h"
 #include "RingTurret.h"
+#include "RingTurretProjectile.h"
+#include "Engine/StaticMesh.h"
 
 // Sets default values
 ARingTurret::ARingTurret()
@@ -16,6 +17,8 @@ ARingTurret::ARingTurret()
 		TurretBody->SetStaticMesh(MeshObj.Object);
 	}
 	TurretBody->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	this->SetRootComponent(TurretBody);
 }
 
 // Called when the game starts or when spawned
@@ -28,5 +31,18 @@ void ARingTurret::BeginPlay()
 void ARingTurret::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ARingTurret::Fire()
+{
+	auto const &transform = this->GetTransform();
+	ARingTurretProjectile *projectile = GetWorld()->SpawnActor<ARingTurretProjectile>(transform.GetLocation(), transform.GetRotation().Rotator());
+	if (projectile) 
+	{
+		projectile->AddActorWorldOffset(FVector(10.0, 0.0, 0.0));
+		UStaticMeshComponent * const mesh = dynamic_cast<UStaticMeshComponent *>(projectile->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+		FVector x_axis = transform.GetUnitAxis(EAxis::Type::Z);
+		mesh->AddImpulse(10000.0F * x_axis);
+	}
 }
 

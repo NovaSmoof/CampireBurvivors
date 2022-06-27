@@ -48,8 +48,8 @@ ACampireBurvivorsCharacter::ACampireBurvivorsCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	// The ring ability, should probably be replaced with something more generic later
-	RingAbility = CreateDefaultSubobject<URingAbility>(TEXT("Ring Ability"));
-	RingAbility->SetupAttachment(RootComponent);
+	// RingAbility = CreateDefaultSubobject<URingAbility>(TEXT("Ring Ability"));
+	// RingAbility->SetupAttachment(RootComponent);
 
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
