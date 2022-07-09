@@ -11,9 +11,17 @@ URingAbility::URingAbility()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	RPS = 0.5F;
-	TurretOffset = 100.0F;
+	Speed = 0.5F;
+	BaseDamage = 15.0F;
+	Duration = 5.0F;
 	Cooldown = 1.83F;
+	Area = 0.25F;
+	Knockback = 0.0F;
+	Amount = 3;
+	Penetration = 6;
+
+	TurretOffset = 100.0F;
+	Bounces = 3;
 	
 	static ConstructorHelpers::FClassFinder<ARingTurret> BPRingTurretFinder(TEXT("Class'/Game/Abilities/Ring/BPRingTurret.BPRingTurret_C'"));
 	if (!BPRingTurretFinder.Succeeded())
@@ -28,9 +36,9 @@ void URingAbility::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CreateTurrets(3); 
-	ReassignTurretRotation();
 	this->SetUsingAbsoluteRotation(true);
+	CreateTurrets(GetEffectiveAmount()); 
+	ReassignTurretRotation();
 }
 
 
@@ -39,29 +47,26 @@ void URingAbility::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FRotator const rotate = UKismetMathLibrary::RotatorFromAxisAndAngle(FVector(0.0, 0.0, 1.0), RPS * DeltaTime * 360.0F);
+	FRotator const rotate = UKismetMathLibrary::RotatorFromAxisAndAngle(FVector(0.0, 0.0, 1.0), GetEffectiveSpeed() * DeltaTime * 360.0F);
 	this->AddLocalRotation(rotate);
+}
 
-	Timer += DeltaTime;
-	if (Timer >= Cooldown)
+void URingAbility::ActivateAbility_Implementation()
+{
+	for (int i = 0; i < this->GetNumChildrenComponents(); ++i)
 	{
-		Timer -= Cooldown;
-		for (int i = 0; i < this->GetNumChildrenComponents(); ++i)
+		USceneComponent *const child = this->GetChildComponent(i);
+		for (int j = 0; j < child->GetNumChildrenComponents(); ++j)
 		{
-			USceneComponent * const child = this->GetChildComponent(i);
-			for (int j = 0; j < child->GetNumChildrenComponents(); ++j)
+			auto *const child_actor = child->GetChildComponent(j);
+			if (child_actor)
 			{
-			 	auto * const child_actor = child->GetChildComponent(j);
-				if (child_actor)
+				if (ARingTurret *const turret = child_actor->GetOwner<ARingTurret>(); turret != nullptr)
 				{
-					if (ARingTurret *const turret = child_actor->GetOwner<ARingTurret>(); turret != nullptr)
-					{
-						turret->Fire();
-					}
+					turret->Fire(GetEffectiveSpeed(), GetEffectiveArea(), GetEffectiveDamage(), GetEffectiveKnockback(), GetEffectiveDuration(), GetEffectivePenetration(), Bounces);
 				}
 			}
 		}
-		
 	}
 }
 

@@ -26,6 +26,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void Fire();
+	void Fire(float Speed, float Area, float BaseDamage, float Knockback, float Duration, int Penetration, int Bounces);
 
 };

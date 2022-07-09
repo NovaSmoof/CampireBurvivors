@@ -19,9 +19,29 @@ class ACampireBurvivorsCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	/** Follow camera */
-	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	// class URingAbility* RingAbility;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true", ClampMin="0"))
+	float DamageScale = 1.0F;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true", ClampMin="0"))
+	float SpeedMultiplier = 1.0F;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true", ClampMin="0"))
+	float DurationMultiplier = 1.0F;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true", ClampMin="-1", ClampMax="1"))
+	float CooldownRate = 0.0F;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true", ClampMin="0"))
+	float AreaScale = 1.0F;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true", ClampMin="0"))
+	float KnockbackScale = 1.0F;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true", ClampMin="0"))
+	int PenetrationExtra = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true", ClampMin="0"))
+	int AmountExtra = 0;
 
 public:
 	ACampireBurvivorsCharacter();
@@ -66,5 +86,15 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+
+	FORCEINLINE float GetSpeedMultiplier() const { return SpeedMultiplier; };
+	FORCEINLINE float GetDamageScale() const { return DamageScale; }
+	FORCEINLINE float GetDurationMultiplier() const { return DurationMultiplier; }
+	FORCEINLINE float GetCooldownRate() const { return CooldownRate; }
+	FORCEINLINE float GetAreaScale() const { return AreaScale; }
+	FORCEINLINE float GetKnockbackScale() const { return KnockbackScale; }
+	FORCEINLINE int GetExtraAmount() const { return AmountExtra; }
+	FORCEINLINE int GetExtraPenetration() const { return PenetrationExtra; }
 };
 

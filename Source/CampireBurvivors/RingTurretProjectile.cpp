@@ -2,6 +2,7 @@
 
 #include "RingTurretProjectile.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "ProjectileDamageType.h"
 
 // Sets default values
 ARingTurretProjectile::ARingTurretProjectile()
@@ -21,10 +22,10 @@ ARingTurretProjectile::ARingTurretProjectile()
 	Projectile->SetSimulatePhysics(true);
 	Projectile->SetEnableGravity(false);
 	Projectile->SetWorldScale3D(FVector(0.25F, 0.25F, 0.25F));
-	Projectile->SetCollisionProfileName(TEXT("BlockAll"), true);
+	Projectile->SetCollisionProfileName(TEXT("Projectiles"), true);
 	Projectile->SetNotifyRigidBodyCollision(true);
 
-	static ConstructorHelpers::FObjectFinder<UObject> PhysicsMaterial(TEXT("PhysicalMaterial'/Game/Bouncy.Bouncy'"));
+	static ConstructorHelpers::FObjectFinder<UObject> PhysicsMaterial(TEXT("PhysicalMaterial'/Game/PhysicsMaterials/PMBouncy.PMBouncy'"));
 	if (PhysicsMaterial.Succeeded() && PhysicsMaterial.Object)
 	{
 		{
@@ -35,7 +36,8 @@ ARingTurretProjectile::ARingTurretProjectile()
 	this->SetRootComponent(Projectile);
 
 	Bounces = 3;
-	Lifespan = 5.0F;
+	Damage = 15.0F;
+	EnemyPenetrations = 0;
 }
 
 // Called when the game starts or when spawned
@@ -45,18 +47,13 @@ void ARingTurretProjectile::BeginPlay()
 	// Uncomment this line if you want the things to locked axially, but then when they collide their upwards direction doesn't go anywhere.
 	// Projectile->SetConstraintMode(EDOFMode::XYPlane);
 	Projectile->OnComponentHit.AddDynamic(this, &ARingTurretProjectile::OnHit);
+	Projectile->OnComponentBeginOverlap.AddDynamic(this, &ARingTurretProjectile::OnOverlapBegins);
 }
 
 // Called every frame
 void ARingTurretProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	Lifespan -= DeltaTime;
-	if (Lifespan < 0.0F)
-	{
-		Destroy();
-	}
 }
 
 void ARingTurretProjectile::OnHit(UPrimitiveComponent *hit_component, 
@@ -65,23 +62,46 @@ void ARingTurretProjectile::OnHit(UPrimitiveComponent *hit_component,
 	FVector normal_impulse, 
 	FHitResult const & hit)
 {
+	if (!other_actor)
+	{
+		return;
+	}
+
 	Bounces -= 1;
 	if (Bounces == 0)
 	{
 		Destroy();
+		return;
 	}
+}
 
-	if (!other_actor || other_actor->ActorHasTag("Enemy"))
+void ARingTurretProjectile::OnOverlapBegins(UPrimitiveComponent *overlapped_component, 
+                                            AActor *other_actor, 
+                                            UPrimitiveComponent *other_comp, 
+                                            int32 other_body_index, 
+                                            bool from_sweep, 
+                                            const FHitResult &sweep_result)
+{
+	if (!other_actor)
 	{
-		Destroy();
+		return;
+	}
+
+	if (other_actor->ActorHasTag("Enemy"))
+	{
+		APlayerController *const player_controller = GetWorld()->GetFirstPlayerController();
+		APawn *const player = player_controller->GetPawn();
+
+		FDamageEvent damage_event;
+		other_actor->TakeDamage(Damage, damage_event, player_controller, player);
+		if (this->EnemyPenetrations > 0)
+		{
+			this->EnemyPenetrations -= 1;
+		}
+		else
+		{
+			Destroy();
+		}
+		return;
 	}
 }
-
-void ARingTurretProjectile::OnOverlapBegin(UPrimitiveComponent * const overlapped_component, AActor *const other_actor, UPrimitiveComponent *const other_comp, int32 other_body_index, bool from_sweep, FHitResult const &sweep_result)
-{
-}
-
-void ARingTurretProjectile::OnOverlapEnd(UPrimitiveComponent *OverlappedComp, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
-{
-}
-

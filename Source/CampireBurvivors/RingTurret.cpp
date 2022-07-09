@@ -33,7 +33,7 @@ void ARingTurret::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ARingTurret::Fire()
+void ARingTurret::Fire(float Speed, float Area, float BaseDamage, float Knockback, float Duration, int Penetration, int Bounces)
 {
 	auto const &transform = this->GetTransform();
 	ARingTurretProjectile *projectile = GetWorld()->SpawnActor<ARingTurretProjectile>(transform.GetLocation(), transform.GetRotation().Rotator());
@@ -41,8 +41,14 @@ void ARingTurret::Fire()
 	{
 		projectile->AddActorWorldOffset(FVector(10.0, 0.0, 0.0));
 		UStaticMeshComponent * const mesh = dynamic_cast<UStaticMeshComponent *>(projectile->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-		FVector x_axis = transform.GetUnitAxis(EAxis::Type::Z);
-		mesh->AddImpulse(10000.0F * x_axis);
+		FVector forward = transform.GetUnitAxis(EAxis::Type::Z); // This is forward because the mesh's up part faces forward
+		
+		mesh->AddImpulse(mesh->GetMass() * Speed * 10000.0F * forward);
+		mesh->SetWorldScale3D(FVector(Area));
+		projectile->Damage = BaseDamage;
+		projectile->Bounces = Bounces;
+		projectile->EnemyPenetrations = Penetration;
+		projectile->SetLifeSpan(Duration);
 	}
 }
 

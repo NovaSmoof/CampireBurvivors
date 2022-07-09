@@ -11,13 +11,19 @@ class CAMPIREBURVIVORS_API ARingTurretProjectile : public AActor
 {
 	GENERATED_BODY()
 
+	friend class ARingTurret;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent *Projectile;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	int32 Bounces;
 
-	float Lifespan;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	int32 EnemyPenetrations;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	float Damage;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -37,9 +43,6 @@ private:
 	void OnHit(UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_component, FVector normal_impulse, FHitResult const &hit);
 
 	UFUNCTION()
-	void OnOverlapBegin(class UPrimitiveComponent *overlapped_component, class AActor *other_actor, class UPrimitiveComponent *other_component, int32 other_body_index, bool from_sweep,  FHitResult const & sweep_result);
+	void OnOverlapBegins(UPrimitiveComponent *overlapped_component, AActor *other_actor, UPrimitiveComponent *other_comp, int32 other_body_index, bool from_sweep, const FHitResult &sweep_result);
 
-	// declare overlap end function
-	UFUNCTION()
-	void OnOverlapEnd(class UPrimitiveComponent *overlapped_component, class AActor *other_actor, class UPrimitiveComponent *other_component, int32 other_body_index);
 };

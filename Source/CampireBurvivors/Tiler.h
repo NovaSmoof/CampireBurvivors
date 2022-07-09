@@ -64,7 +64,7 @@ class CAMPIREBURVIVORS_API ATiler : public AActor
 	int counter = 0;
 	
 	UFUNCTION()
-	void OnOverlapBegins(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+	void OnOverlapBegins(UPrimitiveComponent *overlapped_component, AActor *other_actor, UPrimitiveComponent *other_comp, int32 other_body_index, bool from_sweep, const FHitResult &sweep_result);
 
 	// declare overlap end function
 	UFUNCTION()

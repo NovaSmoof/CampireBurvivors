@@ -5,22 +5,20 @@
 #include "CoreMinimal.h"
 #include "RingTurret.h"
 #include "Components/SceneComponent.h"
+#include "BaseAbility.h"
 #include "RingAbility.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CAMPIREBURVIVORS_API URingAbility : public USceneComponent
+class CAMPIREBURVIVORS_API URingAbility : public UBaseAbility
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	float TurretOffset;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	float RPS;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	float Cooldown;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	int Bounces;
 
 	TSubclassOf<ARingTurret> BPRingTurret;
 public:	
@@ -30,6 +28,9 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	// The function that causes the ability to do something when it gets off cooldown
+	void ActivateAbility_Implementation() override;
 
 public:	
 	// Called every frame
